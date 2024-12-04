@@ -3,7 +3,7 @@ WORKDIR /App
 
 COPY . ./
 
-RUN dotnet restore
+RUN dotnet restore "PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
 RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
