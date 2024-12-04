@@ -27,4 +27,4 @@ EXPOSE 3003
 ENV ASPNETCORE_URLS=http://+:3003
 
 # Set the entry point
-ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService.API.dll"]
+ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API.dll"]
