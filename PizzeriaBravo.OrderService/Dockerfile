@@ -2,11 +2,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /App
 
-# Copy everything
+# Copy the project files
+COPY PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj ./PizzeriaBravo.OrderService.API/
+COPY PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj ./PizzeriaBravo.OrderService.DataAccess/
+
+# Restore dependencies
+RUN dotnet restore "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
+
+# Copy the rest of the files
 COPY . ./
 
-# Restore and publish
-RUN dotnet restore "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
+# Publish the application
 RUN dotnet publish "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release -o out
 
 # Runtime stage
