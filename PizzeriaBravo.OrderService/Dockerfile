@@ -1,17 +1,24 @@
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /App
 
+# Copy everything
 COPY . ./
 
-RUN dotnet restore "PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
-RUN dotnet publish -c Release -o out
+# Restore and publish
+RUN dotnet restore "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
+RUN dotnet publish "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release -o out
 
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
 
-COPY --from=build-env /App/out ./
+# Copy the build output
+COPY --from=build-env /App/out .
 
+# Expose port and set environment variable
 EXPOSE 3003
 ENV ASPNETCORE_URLS=http://+:3003
 
+# Set the entry point
 ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService.API.dll"]
