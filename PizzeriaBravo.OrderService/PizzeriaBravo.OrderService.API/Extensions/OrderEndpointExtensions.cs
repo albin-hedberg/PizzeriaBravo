@@ -24,43 +24,73 @@ public static class OrderEndpointExtension
 
     private static async Task<IResult> GetAllOrders([FromServices] OrderRepository repo)
     {
-        var orders = await repo.GetAllOrdersAsync();
-        return Results.Ok(orders);
+        var response = await repo.GetAllOrdersAsync();
+
+        if (!response.IsSuccess)
+        {
+            return Results.NotFound(response);
+        }
+
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> GetOrderById([FromServices] OrderRepository repo, Guid id)
     {
-        var order = await repo.GetOrderByIdAsync(id);
-        return order is null ? Results.NotFound() : Results.Ok(order);
+        var response = await repo.GetOrderByIdAsync(id);
+        if (!response.IsSuccess)
+        {
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> GetOrdersByCustomerId([FromServices] OrderRepository repo, Guid id)
     {
-        var orders = await repo.GetOrdersByCustomerIdAsync(id);
-        return Results.Ok(orders);
+        var response = await repo.GetOrdersByCustomerIdAsync(id);
+        if (!response.IsSuccess)
+        {
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> GetOrdersByStatus([FromServices] OrderRepository repo, OrderStatus status)
     {
-        var orders = await repo.GetOrdersByOrderStatusAsync(status);
-        return Results.Ok(orders);
+        var response = await repo.GetOrdersByOrderStatusAsync(status);
+        if (!response.IsSuccess)
+        {
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> CreateOrder([FromServices] OrderRepository repo, [FromBody] Order order)
     {
-        var newOrder = await repo.CreateOrderAsync(order);
-        return Results.Created($"/api/orders/{newOrder.Id}", newOrder);
+        var response = await repo.CreateOrderAsync(order);
+        if (!response.IsSuccess)
+        {
+            return Results.BadRequest(response);
+        }
+        return Results.Created($"/api/orders/{response.Data.Id}", response);
     }
 
     private static async Task<IResult> UpdateOrderStatus([FromServices] OrderRepository repo, Guid id, OrderStatus status)
     {
-        var order = await repo.UpdateOrderStatusAsync(id, status);
-        return order is null ? Results.NotFound() : Results.Ok(order);
+        var response = await repo.UpdateOrderStatusAsync(id, status);
+        if (!response.IsSuccess)
+        {
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 
     private static async Task<IResult> DeleteOrder([FromServices] OrderRepository repo, Guid id)
     {
-        await repo.DeleteOrderAsync(id);
-        return Results.Ok(id);
+        var response = await repo.DeleteOrderAsync(id);
+        if (!response.IsSuccess)
+        {
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 }
