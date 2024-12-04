@@ -13,7 +13,7 @@ RUN dotnet restore "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.
 COPY . ./
 
 # Publish the application
-RUN dotnet publish "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release -o out
+RUN dotnet publish "./PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release -o out
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
