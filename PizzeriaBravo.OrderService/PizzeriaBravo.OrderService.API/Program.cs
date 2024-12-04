@@ -6,9 +6,6 @@ using PizzeriaBravo.OrderService.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-//builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
-
 builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<IOrderService<Order>, OrderRepository>();
 
