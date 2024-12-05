@@ -17,12 +17,12 @@ COPY . .
 # Build solution
 RUN dotnet build "PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release
 
-# Stage 2: Publish WebShop (target PizzaService project)
+# Publish
 FROM build AS publish
 WORKDIR /src/PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API
 RUN dotnet publish "PizzeriaBravo.OrderService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Stage 3: Runtime Image
+# Runtime Image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
