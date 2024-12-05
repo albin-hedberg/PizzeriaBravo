@@ -26,6 +26,7 @@ jobs:
       run: |
         docker build . --file PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/Dockerfile --tag ahedberg/pizzeriabravo-orderservice:latest
         docker build . --file PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/Dockerfile --tag ahedberg/pizzeriabravo-orderservice:${{ github.run_id }}
+    
     # Push the latest Docker image
     - name: Push the latest Docker image
       run: | 
