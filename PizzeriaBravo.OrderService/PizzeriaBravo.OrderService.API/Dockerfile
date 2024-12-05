@@ -24,7 +24,7 @@ RUN dotnet publish -c Release -o out
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
-COPY --from=build-env /App/OrderService.API/out .
+COPY --from=build-env /App/PizzeriaBravo.OrderService.API/out .
 EXPOSE 3003
 ENV ASPNETCORE_URLS=http://+:3003
 ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService.API.dll"]
