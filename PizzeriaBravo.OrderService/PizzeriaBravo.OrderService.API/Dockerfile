@@ -23,4 +23,6 @@ RUN dotnet publish "./PizzeriaBravo.OrderService.API.csproj" -c Release -o /app/
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+EXPOSE 3003
+ENV ASPNETCORE_URLS=http://+:3003
 ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService.API.dll"]
