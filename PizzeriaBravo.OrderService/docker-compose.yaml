@@ -49,7 +49,7 @@ services:
       ConnectionStrings__DefaultConnection: "mongodb://mongodb:27017"
     pull_policy: always
 
-# # 1 Local build
+# # Local build
 #   order-service:
 #     container_name: order-service
 #     build:
@@ -62,9 +62,9 @@ services:
 #     environment:
 #       ConnectionStrings__DefaultConnection: "mongodb://mongodb:27017"
 
-# 2 Public image
+# Public image
   order-service:
-    image: ahedberg/pizzeriabravo-orderservice:dev
+    image: ahedberg/pizzeriabravo-orderservice:latest
     container_name: order-service
     ports:
       - "3003:3003"
