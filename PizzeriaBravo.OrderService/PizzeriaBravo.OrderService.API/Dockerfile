@@ -3,25 +3,23 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # docker-compose build
-#COPY ["PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj", "PizzeriaBravo.OrderService.API/"]
-#COPY ["PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj", "PizzeriaBravo.OrderService.DataAccess/"]
-COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj", "PizzeriaBravo.OrderService.API/"]
-COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj", "PizzeriaBravo.OrderService.DataAccess/"]
+COPY ["PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj", "PizzeriaBravo.OrderService.API/"]
+COPY ["PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj", "PizzeriaBravo.OrderService.DataAccess/"]
+#COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj", "PizzeriaBravo.OrderService.API/"]
+#COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj", "PizzeriaBravo.OrderService.DataAccess/"]
 
 # Restore dependencies
-RUN dotnet restore "PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
+RUN dotnet restore "PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
 
 # Copy full solution
 COPY . .
-#COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API", "PizzeriaBravo.OrderService.API/"]
-#COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.DataAccess", "PizzeriaBravo.OrderService.DataAccess/"]
 
 # Build solution
-RUN dotnet build "PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release
+RUN dotnet build "PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj" -c Release
 
 # Stage 2: Publish WebShop (target PizzaService project)
 FROM build AS publish
-WORKDIR /src/PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API
+WORKDIR /src/PizzeriaBravo.OrderService.API
 RUN dotnet publish "PizzeriaBravo.OrderService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Stage 3: Runtime Image
@@ -31,3 +29,37 @@ COPY --from=publish /app/publish .
 EXPOSE 3003
 ENV ASPNETCORE_URLS=http://+:3003
 ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService.API.dll"]
+
+
+#-----------------------------------
+# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+# This stage is used when running from VS in fast mode (Default for Debug configuration)
+#FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+#USER app
+#WORKDIR /app
+#
+## This stage is used to build the service project
+#FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+#WORKDIR /src
+## Local build
+##COPY ["PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj", "PizzeriaBravo.OrderService.API/"]
+##COPY ["PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj", "PizzeriaBravo.OrderService.DataAccess/"]
+#COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj", "PizzeriaBravo.OrderService.API/"]
+#COPY ["PizzeriaBravo.OrderService/PizzeriaBravo.OrderService.DataAccess/PizzeriaBravo.OrderService.DataAccess.csproj", "PizzeriaBravo.OrderService.DataAccess/"]
+#RUN dotnet restore "./PizzeriaBravo.OrderService.API/PizzeriaBravo.OrderService.API.csproj"
+#COPY . .
+#WORKDIR "/src/PizzeriaBravo.OrderService.API"
+#RUN dotnet build "./PizzeriaBravo.OrderService.API.csproj" -c Release -o /app/build
+#
+## This stage is used to publish the service project to be copied to the final stage
+#FROM build AS publish
+#RUN dotnet publish "./PizzeriaBravo.OrderService.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+#
+## This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+#FROM base AS final
+#WORKDIR /app
+#COPY --from=publish /app/publish .
+#EXPOSE 3003
+#ENV ASPNETCORE_URLS=http://+:3003
+#ENTRYPOINT ["dotnet", "PizzeriaBravo.OrderService.API.dll"]
