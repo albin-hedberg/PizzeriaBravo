@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PizzeriaBravo.OrderService.API.Dto;
+using PizzeriaBravo.OrderService.API.Interfaces;
 using PizzeriaBravo.OrderService.DataAccess.Entities;
 using PizzeriaBravo.OrderService.DataAccess.Enums;
-using PizzeriaBravo.OrderService.DataAccess.Repositories;
+using PizzeriaBravo.OrderService.DataAccess.Interfaces;
 
 namespace PizzeriaBravo.OrderService.API.Extensions;
 
@@ -13,16 +15,14 @@ public static class OrderEndpointExtension
 
         group.MapGet("/", GetAllOrders);
         group.MapGet("/{id}", GetOrderById);
-        group.MapGet("/customer/{id}", GetOrdersByCustomerId);
-        group.MapGet("/status/{status}", GetOrdersByStatus);
         group.MapPost("/", CreateOrder);
         group.MapPut("/{id}/status/{status}", UpdateOrderStatus);
-        group.MapDelete("/{id}", DeleteOrder);
+        group.MapDelete("/{id}", CancelOrder);
 
         return app;
     }
 
-    private static async Task<IResult> GetAllOrders([FromServices] OrderRepository repo)
+    private static async Task<IResult> GetAllOrders(IOrderService<Order> repo)
     {
         var response = await repo.GetAllOrdersAsync();
 
@@ -34,7 +34,7 @@ public static class OrderEndpointExtension
         return Results.Ok(response);
     }
 
-    private static async Task<IResult> GetOrderById([FromServices] OrderRepository repo, Guid id)
+    private static async Task<IResult> GetOrderById(IOrderService<Order> repo, Guid id)
     {
         var response = await repo.GetOrderByIdAsync(id);
         if (!response.IsSuccess)
@@ -44,9 +44,53 @@ public static class OrderEndpointExtension
         return Results.Ok(response);
     }
 
-    private static async Task<IResult> GetOrdersByCustomerId([FromServices] OrderRepository repo, Guid id)
+    private static async Task<IResult> CreateOrder(IMessageService ms, [FromBody] Order order)
     {
-        var response = await repo.GetOrdersByCustomerIdAsync(id);
+        var message = new MessageDto<Order>
+        {
+            MethodInfo = "post",
+            Data = order
+        };
+
+        await ms.PublishMessageAsync(message);
+
+        return Results.Ok(message);
+
+        //var response = await repo.CreateOrderAsync(order);
+        //if (!response.IsSuccess)
+        //{
+        //    return Results.BadRequest(response);
+        //}
+        //return Results.Created($"/api/orders/{response.Data.Id}", response);
+    }
+
+    private static async Task<IResult> UpdateOrderStatus(IMessageService ms, Guid id, OrderStatus status)
+    {
+        var message = new MessageDto<Order>
+        {
+            MethodInfo = "put",
+            Data = new Order
+            {
+                Id = id,
+                Status = status
+            }
+        };
+
+        await ms.PublishMessageAsync(message);
+
+        return Results.Ok(message);
+
+        //var response = await repo.UpdateOrderStatusAsync(id, status);
+        //if (!response.IsSuccess)
+        //{
+        //    return Results.NotFound(response);
+        //}
+        //return Results.Ok(response);
+    }
+
+    private static async Task<IResult> CancelOrder(IOrderService<Order> repo, Guid id)
+    {
+        var response = await repo.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
         if (!response.IsSuccess)
         {
             return Results.NotFound(response);
@@ -54,43 +98,13 @@ public static class OrderEndpointExtension
         return Results.Ok(response);
     }
 
-    private static async Task<IResult> GetOrdersByStatus([FromServices] OrderRepository repo, OrderStatus status)
-    {
-        var response = await repo.GetOrdersByOrderStatusAsync(status);
-        if (!response.IsSuccess)
-        {
-            return Results.NotFound(response);
-        }
-        return Results.Ok(response);
-    }
-
-    private static async Task<IResult> CreateOrder([FromServices] OrderRepository repo, [FromBody] Order order)
-    {
-        var response = await repo.CreateOrderAsync(order);
-        if (!response.IsSuccess)
-        {
-            return Results.BadRequest(response);
-        }
-        return Results.Created($"/api/orders/{response.Data.Id}", response);
-    }
-
-    private static async Task<IResult> UpdateOrderStatus([FromServices] OrderRepository repo, Guid id, OrderStatus status)
-    {
-        var response = await repo.UpdateOrderStatusAsync(id, status);
-        if (!response.IsSuccess)
-        {
-            return Results.NotFound(response);
-        }
-        return Results.Ok(response);
-    }
-
-    private static async Task<IResult> DeleteOrder([FromServices] OrderRepository repo, Guid id)
-    {
-        var response = await repo.DeleteOrderAsync(id);
-        if (!response.IsSuccess)
-        {
-            return Results.NotFound(response);
-        }
-        return Results.Ok(response);
-    }
+    //private static async Task<IResult> DeleteOrder(IOrderService<Order> repo, Guid id)
+    //{
+    //    var response = await repo.DeleteOrderAsync(id);
+    //    if (!response.IsSuccess)
+    //    {
+    //        return Results.NotFound(response);
+    //    }
+    //    return Results.Ok(response);
+    //}
 }

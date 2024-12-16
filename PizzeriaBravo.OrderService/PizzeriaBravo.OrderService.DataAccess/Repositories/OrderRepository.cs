@@ -48,7 +48,6 @@ public class OrderRepository : IOrderService<Order>
                 Message = $"Error: {ex.Message}"
             };
         }
-        //return await _orders.Find(order => true).ToListAsync();
     }
 
     public async Task<Response<Order>> GetOrderByIdAsync(Guid id)
@@ -208,8 +207,11 @@ public class OrderRepository : IOrderService<Order>
     {
         try
         {
-            var result = await _orders.DeleteOneAsync(o => o.Id == id);
-            if (result.DeletedCount == 0)
+            var update = Builders<Order>.Update.Set(o => o.Status, OrderStatus.Cancelled);
+            var result = await _orders.UpdateOneAsync(o => o.Id == id, update);
+            //var result = await _orders.DeleteOneAsync(o => o.Id == id);
+            //if (result.DeletedCount == 0)
+            if (result.MatchedCount == 0)
             {
                 return new Response<Guid>
                 {
@@ -222,7 +224,8 @@ public class OrderRepository : IOrderService<Order>
             {
                 Data = id,
                 IsSuccess = true,
-                Message = "Order deleted successfully."
+                Message = "Order cancelled successfully."
+                //Message = "Order deleted successfully."
             };
         }
         catch (Exception ex)
@@ -235,37 +238,4 @@ public class OrderRepository : IOrderService<Order>
             };
         }
     }
-
-    //public async Task<Order> GetOrderByIdAsync(Guid id)
-    //{
-    //    return await _orders.Find(order => order.Id == id).FirstOrDefaultAsync();
-    //}
-
-    //public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId)
-    //{
-    //    return await _orders.Find(order => order.CustomerId == customerId).ToListAsync();
-    //}
-
-    //public async Task<IEnumerable<Order>> GetOrdersByOrderStatusAsync(OrderStatus status)
-    //{
-    //    return await _orders.Find(order => order.Status == status).ToListAsync();
-    //}
-
-    //public async Task<Order> CreateOrderAsync(Order order)
-    //{
-    //    await _orders.InsertOneAsync(order);
-    //    return order;
-    //}
-
-    //public async Task<Order> UpdateOrderStatusAsync(Guid id, OrderStatus status)
-    //{
-    //    var filter = Builders<Order>.Filter.Eq(order => order.Id, id);
-    //    var update = Builders<Order>.Update.Set(order => order.Status, status);
-    //    return await _orders.FindOneAndUpdateAsync(filter, update);
-    //}
-
-    //public async Task DeleteOrderAsync(Guid id)
-    //{
-    //    await _orders.DeleteOneAsync(order => order.Id == id);
-    //}
 }

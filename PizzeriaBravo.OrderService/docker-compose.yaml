@@ -50,17 +50,17 @@ services:
     pull_policy: always
 
 # # Local build
-#   order-service:
-#     container_name: order-service
-#     build:
-#       context: .
-#       dockerfile: PizzeriaBravo.OrderService.API/Dockerfile
-#     ports:
-#       - "3003:3003"
-#     depends_on:
-#       - mongodb
-#     environment:
-#       ConnectionStrings__DefaultConnection: "mongodb://mongodb:27017"
+  # order-service:
+  #   container_name: order-service
+  #   build:
+  #     context: .
+  #     dockerfile: PizzeriaBravo.OrderService.API/Dockerfile
+  #   ports:
+  #     - "3003:3003"
+  #   depends_on:
+  #     - mongodb
+  #   environment:
+  #     ConnectionStrings__DefaultConnection: "mongodb://mongodb:27017"
 
 # Public image
   order-service:
@@ -97,7 +97,7 @@ services:
     pull_policy: always
 
   gateway:
-    image: arialind/pizzeria-bravo-gateway:latest
+    image: josephrashidmaalouf/pizzeria-bravo-gateway:latest
     ports: 
       - "3000:3000"
     depends_on:
@@ -107,6 +107,19 @@ services:
       - pizza-service
     pull_policy: always
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   mongodb_data:
   sqlserver_data:
+  rabbitmq_data:  
