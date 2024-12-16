@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using PizzeriaBravo.OrderService.API.Dto;
 using PizzeriaBravo.OrderService.API.Interfaces;
 using PizzeriaBravo.OrderService.DataAccess.Entities;
@@ -16,6 +17,7 @@ public static class OrderEndpointExtension
         group.MapGet("/", GetAllOrders);
         group.MapGet("/{id}", GetOrderById);
         group.MapPost("/", CreateOrder);
+        group.MapPost("/save", SaveOrder);
         group.MapPut("/{id}/status/{status}", UpdateOrderStatus);
         group.MapDelete("/{id}", CancelOrder);
 
@@ -62,6 +64,16 @@ public static class OrderEndpointExtension
         //    return Results.BadRequest(response);
         //}
         //return Results.Created($"/api/orders/{response.Data.Id}", response);
+    }
+
+    private static async Task<IResult> SaveOrder(IOrderService<Order> repo, [FromBody] MessageDto<Order> messageOrder)
+    {
+        var response = await repo.CreateOrderAsync(messageOrder.Data);
+        if (!response.IsSuccess)
+        {
+            return Results.BadRequest(response);
+        }
+        return Results.Created($"/api/orders/{response.Data.Id}", response);
     }
 
     private static async Task<IResult> UpdateOrderStatus(IOrderService<Order> repo, Guid id, OrderStatus status)
