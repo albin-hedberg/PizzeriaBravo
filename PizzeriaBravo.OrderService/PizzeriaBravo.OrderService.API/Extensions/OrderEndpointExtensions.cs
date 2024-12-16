@@ -73,8 +73,8 @@ public static class OrderEndpointExtension
         {
             return Results.BadRequest(response);
         }
-        //return Results.Created($"/api/orders/{response.Data.Id}", response);
-        return Results.Ok(response);
+        return Results.Created($"/api/orders/{response.Data.Id}", response);
+        //return Results.Ok(response);
     }
 
     private static async Task<IResult> UpdateOrderStatus(IOrderService<Order> repo, Guid id, OrderStatus status)
