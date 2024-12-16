@@ -24,8 +24,16 @@
 - **Request Body:** 
   - `Order` object containing the order details.
 - **Response:**
+  - `200 Ok` with the MessageDto details.
+
+#### Save Order
+- **Endpoint:** `POST /api/orders/save`
+- **Description:** Saves a new order based on the provided message.
+- **Request Body:** 
+  - `MessageDto<Order>` object containing the order details and method information.
+- **Response:**
   - `201 Created` with the created order details.
-  - `400 Bad Request` if the order creation fails.
+  - `400 Bad Request` if the order could not be created.
 
 #### Update Order Status
 - **Endpoint:** `PUT /api/orders/{id}/status/{status}`
