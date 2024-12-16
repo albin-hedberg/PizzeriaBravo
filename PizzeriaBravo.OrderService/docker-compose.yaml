@@ -1,24 +1,3 @@
-# services:
-#   mongodb:
-#     image: mongo:latest
-#     ports:
-#       - "27017:27017"
-
-#   order-service:
-#     container_name: order-service
-#     build:
-#       context: .
-#       dockerfile: PizzeriaBravo.OrderService.API/Dockerfile
-#     ports:
-#       - "3003:8080"
-#     depends_on:
-#       - mongodb
-#     environment:
-#       ConnectionStrings__DefaultConnection: "mongodb://mongodb:27017"
-
-# volumes:
-#   mongodb_data:
-#--------------------------------------------
 #version: '3.8'
 
 services:
@@ -122,4 +101,4 @@ services:
 volumes:
   mongodb_data:
   sqlserver_data:
-  rabbitmq_data:  
+  rabbitmq_data:

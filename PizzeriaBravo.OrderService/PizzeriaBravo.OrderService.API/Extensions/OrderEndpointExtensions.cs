@@ -64,52 +64,25 @@ public static class OrderEndpointExtension
         //return Results.Created($"/api/orders/{response.Data.Id}", response);
     }
 
-    private static async Task<IResult> UpdateOrderStatus(IMessageService ms, Guid id, OrderStatus status)
+    private static async Task<IResult> UpdateOrderStatus(IOrderService<Order> repo, Guid id, OrderStatus status)
     {
-        var message = new MessageDto<Order>
+
+        var response = await repo.UpdateOrderStatusAsync(id, status);
+        if (!response.IsSuccess)
         {
-            MethodInfo = "put",
-            Data = new Order
-            {
-                Id = id,
-                Status = status
-            }
-        };
-
-        await ms.PublishMessageAsync(message);
-
-        return Results.Ok(message);
-
-        //var response = await repo.UpdateOrderStatusAsync(id, status);
-        //if (!response.IsSuccess)
-        //{
-        //    return Results.NotFound(response);
-        //}
-        //return Results.Ok(response);
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 
-    private static async Task<IResult> CancelOrder(IMessageService ms, Guid id)
+    private static async Task<IResult> CancelOrder(IOrderService<Order> repo, Guid id)
     {
-        var message = new MessageDto<Order>
+        var response = await repo.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
+        if (!response.IsSuccess)
         {
-            MethodInfo = "delete",
-            Data = new Order
-            {
-                Id = id,
-                Status = OrderStatus.Cancelled
-            }
-        };
-
-        await ms.PublishMessageAsync(message);
-
-        return Results.Ok(message);
-
-        //var response = await repo.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
-        //if (!response.IsSuccess)
-        //{
-        //    return Results.NotFound(response);
-        //}
-        //return Results.Ok(response);
+            return Results.NotFound(response);
+        }
+        return Results.Ok(response);
     }
 
     //private static async Task<IResult> DeleteOrder(IOrderService<Order> repo, Guid id)
