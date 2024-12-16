@@ -1,4 +1,3 @@
-using MongoDB.Driver;
 using PizzeriaBravo.OrderService.API.Extensions;
 using PizzeriaBravo.OrderService.API.Interfaces;
 using PizzeriaBravo.OrderService.API.Services;

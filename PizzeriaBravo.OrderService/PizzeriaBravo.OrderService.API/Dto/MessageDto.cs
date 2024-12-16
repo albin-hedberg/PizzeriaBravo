@@ -2,6 +2,6 @@
 
 public class MessageDto<T>
 {
-    public string MethodInfo { get; set; } // "post", "put", "delete"
+    public string MethodInfo { get; set; }
     public T Data { get; set; }
 }

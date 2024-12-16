@@ -209,8 +209,7 @@ public class OrderRepository : IOrderService<Order>
         {
             var update = Builders<Order>.Update.Set(o => o.Status, OrderStatus.Cancelled);
             var result = await _orders.UpdateOneAsync(o => o.Id == id, update);
-            //var result = await _orders.DeleteOneAsync(o => o.Id == id);
-            //if (result.DeletedCount == 0)
+
             if (result.MatchedCount == 0)
             {
                 return new Response<Guid>
@@ -225,7 +224,6 @@ public class OrderRepository : IOrderService<Order>
                 Data = id,
                 IsSuccess = true,
                 Message = "Order cancelled successfully."
-                //Message = "Order deleted successfully."
             };
         }
         catch (Exception ex)

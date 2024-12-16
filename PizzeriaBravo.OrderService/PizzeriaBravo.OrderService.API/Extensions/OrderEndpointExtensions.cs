@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PizzeriaBravo.OrderService.API.Dto;
 using PizzeriaBravo.OrderService.API.Interfaces;
 using PizzeriaBravo.OrderService.DataAccess.Entities;
@@ -57,13 +56,6 @@ public static class OrderEndpointExtension
         await ms.PublishMessageAsync(message);
 
         return Results.Ok(message);
-
-        //var response = await repo.CreateOrderAsync(order);
-        //if (!response.IsSuccess)
-        //{
-        //    return Results.BadRequest(response);
-        //}
-        //return Results.Created($"/api/orders/{response.Data.Id}", response);
     }
 
     private static async Task<IResult> SaveOrder(IOrderService<Order> repo, [FromBody] MessageDto<Order> messageOrder)
@@ -74,7 +66,6 @@ public static class OrderEndpointExtension
             return Results.BadRequest(response);
         }
         return Results.Created($"/api/orders/{response.Data.Id}", response);
-        //return Results.Ok(response);
     }
 
     private static async Task<IResult> UpdateOrderStatus(IOrderService<Order> repo, Guid id, OrderStatus status)
@@ -97,14 +88,4 @@ public static class OrderEndpointExtension
         }
         return Results.Ok(response);
     }
-
-    //private static async Task<IResult> DeleteOrder(IOrderService<Order> repo, Guid id)
-    //{
-    //    var response = await repo.DeleteOrderAsync(id);
-    //    if (!response.IsSuccess)
-    //    {
-    //        return Results.NotFound(response);
-    //    }
-    //    return Results.Ok(response);
-    //}
 }

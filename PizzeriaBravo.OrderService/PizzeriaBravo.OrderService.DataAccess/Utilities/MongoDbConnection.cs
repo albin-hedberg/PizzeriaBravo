@@ -4,7 +4,6 @@ namespace PizzeriaBravo.OrderService.DataAccess.Utilities;
 
 public class MongoDbConnection
 {
-    //private static readonly string HostName = "localhost";
     private static readonly string HostName = "mongodb";
     private static readonly string Port = "27017";
     private static readonly string DatabaseName = "PizzeriaBravo";

@@ -14,9 +14,4 @@ public class Order
     public List<Pizza>? Pizzas { get; set; }
     public List<Foodstuff>? Foodstuff { get; set; }
     public OrderStatus Status { get; set; }
-
-    //public List<OrderItem> OrderItems { get; set; }
-    //public List<BsonDocument>? OrderItems { get; set; }
-    //public double TotalPrice { get; set; }
-    //public DateTime OrderDate { get; set; }
 }

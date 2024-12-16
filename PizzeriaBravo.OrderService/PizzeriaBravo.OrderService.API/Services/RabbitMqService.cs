@@ -3,7 +3,6 @@ using RabbitMQ.Client;
 using System.Text.Json;
 using System.Text;
 using PizzeriaBravo.OrderService.API.Dto;
-using PizzeriaBravo.OrderService.DataAccess.Entities;
 
 namespace PizzeriaBravo.OrderService.API.Services;
 
