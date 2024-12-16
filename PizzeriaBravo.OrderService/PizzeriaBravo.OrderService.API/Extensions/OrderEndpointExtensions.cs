@@ -88,14 +88,28 @@ public static class OrderEndpointExtension
         //return Results.Ok(response);
     }
 
-    private static async Task<IResult> CancelOrder(IOrderService<Order> repo, Guid id)
+    private static async Task<IResult> CancelOrder(IMessageService ms, Guid id)
     {
-        var response = await repo.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
-        if (!response.IsSuccess)
+        var message = new MessageDto<Order>
         {
-            return Results.NotFound(response);
-        }
-        return Results.Ok(response);
+            MethodInfo = "delete",
+            Data = new Order
+            {
+                Id = id,
+                Status = OrderStatus.Cancelled
+            }
+        };
+
+        await ms.PublishMessageAsync(message);
+
+        return Results.Ok(message);
+
+        //var response = await repo.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
+        //if (!response.IsSuccess)
+        //{
+        //    return Results.NotFound(response);
+        //}
+        //return Results.Ok(response);
     }
 
     //private static async Task<IResult> DeleteOrder(IOrderService<Order> repo, Guid id)
